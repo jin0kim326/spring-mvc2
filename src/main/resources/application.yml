@@ -1,0 +1,5 @@
+server:
+  port: 8089
+logging:
+  level:
+    hello.springmvc: trace
