@@ -1,0 +1,31 @@
+1.ByteArrayMessageConverter: byte[] 데이터를 처리
+- 클래스타입 : byte[], 미디어타입: '*/*'
+- 요청 예 ) @RequestBody byte[] data
+- 응답 예 ) @ResponseBody return byte[]
+
+2.StringHttpMessageConverter : String 문자로 데이터 처리
+- 클래스타입 : String 미디어타입:'*/*'
+- 요청 예 ) @RequestBody byte[] data
+- 응답 예 ) @ResponseBody return byte[]
+
+3.MappingJackson2HttpMessageConverter: application/json
+- 클래스 타입: 객체 또는 HashMap, 미디어타입:application/json
+요청 예) @RequestBody HelloData data
+응답 예) @ResponseBody return helloData
+
+---------------------------------------------------------
+
+HTTP 요청 데이터 읽는 순서
+1. 요청이 들어옴, 컨트롤러에서 @RequestBody, HttpEntity파라미터 사용
+2. 메시지 컨버터가 메시지를 읽을수 있는지 확인하기 위해 canRead()호출,
+ - 대상 클래스 타입을 지원하는가?
+ - HTTP요청의 Content-type 미디어타입을 지원하는가?
+3. canRead() 조건 만족시 read() 호출해서 객채 생성 -> 반환
+
+HTTP 응답 데이터 생성 순서
+1. 컨트롤러에서 @ResponseBody, HttpEntity로 반환한다
+2. 메시지 컨버터가 메시지를 쓸 수 있는지 확인하기 위해 canWrite()호출
+ - 대상 클래스 타입을 지원하는가?
+ - HTTP요청의 Accept 미디어타입을 지원하는가? (더 정확히는 @RequestMapping의 produces)
+3. canWrite()를 만족하면 write()호출해서 HTTP 응답 메시지 바디에 데이터를 생성
+
