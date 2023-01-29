@@ -1,0 +1,23 @@
+http메시지 컨버터가 어디서 동작할까...?
+
+-> 애노테이션 기반의 컨트롤러, 즉 @RequestMapping을 처리하는 핸들러 어댑터인 RequestMappingHandlerAdapter에 있음.
+
+🔥 ArgumentResolver (HandlerMethodArgumentResolver)
+애노테이션 기반의 컨트롤러는 매우 다양한 파라미터를 사용할 수 있음
+HttpserServletRequest, Model, @RequestParam 등등.. 이러한 파라미터들을 처리하는게 ArgumentResolver
+
+이 ArgumentResolver를 호출해서 컨트롤러가 필요로 하는 다양한 파라미터의 값(객체)를 생성,
+이 파라미터의 값이 모두 준비되면 컨트롤러를 호출하면서 값을 넘겨줌
+
+🔥 ReturnValueHandler (HandlerMethodReturnValueHandler
+- ArgumentResolver와 비슷한데 이것은 응답 값을 변환하고 처리
+- String으로 뷰 이름을 반환해도 동작하는 이유가 이 핸들러 때문이다
+
+HTTP 메시지 컨버터의 위치 ??? -> ArgumentResolver, ReturnValueHandler가 사용함
+
+ex) 요청의 경우
+-> @RequestBody를 처리하는 ArgumentResolver가 있고, HttpEntity를 처리하는 ArgumentResolver가 있음
+이 리졸버들이 HTTP 메시지 컨버터를 사용해서 필요한 객체를 생성
+
+ex) 응답의 경우
+-> @ResponseBody, HttpEntity를 처리하는 ReturnValueHandler가 있고 여기에서 HTTP 메시지 컨터터를 호출해서 응답결과를 만듦
