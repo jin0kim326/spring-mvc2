@@ -2,7 +2,6 @@ package hello.springmvc.web.basic;
 
 import hello.springmvc.domain.item.Item;
 import hello.springmvc.domain.item.ItemRepository;
-import hello.springmvc.web.basic.param.ItemRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -64,6 +63,19 @@ public class BasicItemController {
         itemRepository.save(item);
 
         return "basic/item";
+    }
+
+    @GetMapping("/{itemId}/edit")
+    public String editForm(@PathVariable Long itemId,Model model) {
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute("item", item);
+        return "basic/editForm";
+    }
+
+    @PostMapping("/{itemId}/edit")
+    public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+        itemRepository.update(itemId, item);
+        return "redirect:/basic/items/{itemId}";
     }
 
     @PostConstruct
