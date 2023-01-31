@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -58,12 +59,29 @@ public class BasicItemController {
      *
      * ** @ModelAttribute자체도 생략가능하지만.. 권장하지않음
      */
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV2(@ModelAttribute Item item) {
         itemRepository.save(item);
-
-        return "basic/item";
+        /**
+         * 🔥 심각한 문제가 있음. "basic/item" (뷰)를 리턴하는경우 새로고침시에 post요청을 계속함.
+         * redirect해주면 새로고침시 get요청을 하기에 문제없음
+         */
+//        return "basic/item";
+        return "redirect:/basic/item/"+ item.getId();
     }
+
+    /**
+     * 1.pathvariable 바인딩
+     * 2.나머지는 쿼리 파라미터로 처리
+     */
+    @PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item, RedirectAttributes redirectAttributes) {
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}";
+    }
+
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId,Model model) {
